@@ -1,113 +1,99 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-final List<String> Students = [
-  'Esel',
-  'Louie',
-  'King',
-  'Marc',
-  'Mariella',
-  'Mono',
-  'Dan',
-  'Joana',
-  'Loloy',
-  'Jomar',
-];
-
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Students List'),
-        ),
-        body: const StudentsList(),
+      title: 'yourName_MidtermExam',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: ItemListScreen(),
+    );
+  }
+}
+
+class ItemListScreen extends StatefulWidget {
+  @override
+  _ItemListScreenState createState() => _ItemListScreenState();
+}
+
+class _ItemListScreenState extends State<ItemListScreen> {
+  final List<String> items = [
+    "Anime",
+    "Charlie Action Figure",
+    "David's Graphic Novel",
+    "Eva's Art Print",
+    "Frank's Collectible Toy",
+    "Grace's Manga Volume",
+    "Isaac's Video Game",
+    "Hannah's Cosplay Costume",
+    "Jack's Merchandise Bundle",
+  ];
+
+  List<bool> addedItems = List.generate(9, (index) => false);
+
+  void _showDetails(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Details"),
+        content: Text("Details for ${items[index]}"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text("Close"),
+          ),
+        ],
       ),
     );
-
-     home: DynamicUI(),
   }
 
-  
-}
-
-class StudentsList extends StatelessWidget {
-  const StudentsList({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: Students.length,
-      itemBuilder: (context, index) {
-        final Students = Students[index];
-        return ListTile(
-          title: Text(
-            Students.toUpperCase(),
-            style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class DynamicUI extends StatefulWidget {
-  @override
-  _DynamicUIState createState() => _DynamicUIState();
-}
-
-class _DynamicUIState extends State<DynamicUI> {
-  Color _containerColor = Colors.blue;
-  double _containerSize = 100.0;
-
-  void _changeProperties() {
+  void _addItem(int index) {
     setState(() {
-      _containerColor =
-          _containerColor == Colors.blue ? Colors.red : Colors.blue;
-      _containerSize = _containerSize == 100.0 ? 250.0 : 100.0;
+      addedItems[index] = !addedItems[index];
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Dynamic UI'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            AnimatedContainer(
-              duration: Duration(milliseconds: 300),
-              width: _containerSize,
-              height: _containerSize,
-              color: _containerColor,
-              child: Center(
-                child: Text(
-                  'Add',
-                  style: TextStyle(color: Colors.white),
-                ),
+      appBar: AppBar(title: Text('yourName_MidtermExam')),
+      body: ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return AnimatedContainer(
+            duration: Duration(milliseconds: 300),
+            color: addedItems[index] ? Colors.green : Colors.white,
+            margin: EdgeInsets.all(10),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(items[index], style: TextStyle(fontSize: 20)),
+                  ),
+                  Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () => _showDetails(index),
+                        child: Text("Details"),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => _addItem(index),
+                        child: Text(addedItems[index] ? "Added" : "Add"),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _changeProperties,
-              child: Text('Added'),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 }
-
